@@ -18,11 +18,15 @@ from django.contrib import admin
 
 from untitled import views
 from tasks import apps
-from tasks.api import TaskResource, DueDateTodayResource, SubTaskResource
+from tasks.api import TaskResource, DueDateTodayResource, SubTaskResource, DueDateThisWeekResource, \
+    DueDateNextWeekResource, DueDateOverdueResource
 from tastypie.api import Api
 
 task_resource = TaskResource()
 due_date_resource = DueDateTodayResource()
+due_date_this_week_resource = DueDateThisWeekResource()
+due_date_next_week_resource = DueDateNextWeekResource()
+due_date_overdue_resource = DueDateOverdueResource()
 
 app_name = 'home'
 
@@ -36,6 +40,9 @@ urlpatterns = [
     url(r'^$', views.index),
     url(r'^api/', include(v1_api.urls)),
     url(r'^api2/', include(due_date_resource.urls)),
+    url(r'^api2/', include(due_date_this_week_resource.urls)),
+    url(r'^api2/', include(due_date_next_week_resource.urls)),
+    url(r'^api2/', include(due_date_overdue_resource.urls)),
 
 
 ]

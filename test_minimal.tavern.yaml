@@ -1,0 +1,17 @@
+
+
+test_name: Get All Tasks
+
+# ...and each test has one or more stages (e.g. an HTTP request)
+stages:
+  - name: Fetch Tasks
+
+    # Define the request to be made...
+    request:
+      url: http://127.0.0.1:8000/api/v1/tasks/?format=json
+      method: GET
+
+    # ...and the expected response code and body
+    response:
+      status_code: 200
+

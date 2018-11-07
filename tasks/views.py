@@ -4,13 +4,28 @@ from __future__ import unicode_literals
 from django.shortcuts import render
 from django.http import HttpResponse
 # Create your views here.
-
+from tasks.models import Task
 from .models import Task,SubTask
-from datetime import datetime
+from datetime import datetime,timedelta
+
+import pytz
 
 
-def get_seconds_difference(before, after):
-    return abs(before - after).total_seconds() <= 14400
+def get_hours_difference(due_date):
+    utc = pytz.UTC
+    time_after = datetime.now().replace(tzinfo=utc) + timedelta(seconds=3600*4)
+    time_before = datetime.now().replace(tzinfo=utc)
+    print (time_after)
+    print (time_before)
+    due_date_in_utc = due_date.replace(tzinfo=utc)
+    print (due_date_in_utc)
+    if time_before <= due_date_in_utc:
+        if due_date_in_utc <= time_after:
+            return True
+        else:
+            return False
+    else:
+        return False
 
 
 def update(request, tasks_id):
@@ -27,10 +42,7 @@ def update(request, tasks_id):
     tasks = Task.objects.all()
     task_alert = []
     for task in tasks:
-        d1 = datetime.now()
-        d2 = datetime(task.due_date.year, task.due_date.month, task.due_date.day, task.due_date.hour,
-                      task.due_date.minute, task.due_date.second)
-        alert = get_seconds_difference(d1, d2)
+        alert = get_hours_difference(task.due_date)
         if alert:
             task_alert.append(task)
 
@@ -38,6 +50,7 @@ def update(request, tasks_id):
 
 
 def sub_task_update(request, tasks_id):
+    task_id = -1
     sub_task = SubTask.objects.get(id=tasks_id)
     if sub_task.sub_state:
         sub_task.sub_state = 0
@@ -48,25 +61,40 @@ def sub_task_update(request, tasks_id):
 
     tasks = Task.objects.all()
     task_alert = []
-    for task in tasks:
-        all_sub_tasks = task.sub_task_many.all()
-        flag = False
-        for subTask in all_sub_tasks:
-            # print (subTask.id)
-            if subTask.sub_state:
-                flag = True
-            else:
-                flag = False
+
+    for all_task in tasks:
+        for sub_tasks in all_task.sub_task_many.all():
+            global task_id
+            print (sub_tasks.sub_title)
+            print (sub_tasks.id)
+            print (tasks_id)
+            if str(sub_tasks.id) == str(tasks_id):
+                print ("hello")
+                task_id = all_task.id
                 break
+        if task_id != -1:
+            break
 
-        if flag:
-            # print (task.id)
-            return update(request, task.id)
+    print (task_id)
+    getTask = Task.objects.get(id=task_id)  # type: Task
+    flag = False
+    for all_sub_tasks in getTask.sub_task_many.all():
+        global flag
+        if all_sub_tasks.sub_state:
+            flag = True
+        else:
+            flag = False
+            break
 
-        d1 = datetime.now()
-        d2 = datetime(task.due_date.year, task.due_date.month, task.due_date.day, task.due_date.hour,
-                      task.due_date.minute, task.due_date.second)
-        alert = get_seconds_difference(d1, d2)
+    if flag:
+        if getTask.state:
+            getTask.state = 0
+        else:
+            getTask.state = 1
+        getTask.save()
+
+    for task in tasks:
+        alert = get_hours_difference(task.due_date)
         if alert:
             task_alert.append(task)
 

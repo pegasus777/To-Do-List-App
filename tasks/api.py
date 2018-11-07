@@ -1,6 +1,6 @@
 from tastypie.resources import ModelResource, fields
 from tastypie.constants import ALL
-from datetime import datetime, date
+from datetime import datetime, date,timedelta
 from tastypie.exceptions import HttpResponse
 from tastypie.authorization import Authorization
 
@@ -52,10 +52,12 @@ class DueDateThisWeekResource(ModelResource):
     sub_tasks_many = fields.ManyToManyField(SubTaskResource, 'sub_task_many', full=True, null=True, blank=True)
 
     class Meta:
-        today = date.today()
-        queryset = Task.objects.all().filter(due_date__year=today.year,
-                                             due_date__month=today.month,
-                                             due_date__day=today.day).order_by("due_date")
+        today = date.today().strftime("%Y/%m/%d")
+        dt = datetime.strptime(today, '%Y/%m/%d')
+        start = dt - timedelta(days=dt.weekday())
+        end = start + timedelta(days=6)
+        queryset = Task.objects.all().filter(due_date__range=(start, end))
+
         resource_name = 'due_date_this_week'
         fields = ['title', 'description', 'due_date', 'state', 'sub_tasks_many']
         filtering = {
@@ -67,10 +69,12 @@ class DueDateNextWeekResource(ModelResource):
     sub_tasks_many = fields.ManyToManyField(SubTaskResource, 'sub_task_many', full=True, null=True, blank=True)
 
     class Meta:
-        today = date.today()
-        queryset = Task.objects.all().filter(due_date__year=today.year,
-                                             due_date__month=today.month,
-                                             due_date__day=today.day).order_by("due_date")
+        today = date.today().strftime("%Y/%m/%d")
+        dt = datetime.strptime(today, '%Y/%m/%d')
+        start = dt - timedelta(days=dt.weekday()) + timedelta(days=7)
+        end = start + timedelta(days=6)
+
+        queryset = Task.objects.all().filter(due_date__range=(start, end)).order_by("due_date")
         resource_name = 'due_date_next_week'
         fields = ['title', 'description', 'due_date', 'state', 'sub_tasks_many']
         filtering = {
@@ -80,18 +84,19 @@ class DueDateNextWeekResource(ModelResource):
 
 class DueDateOverdueResource(ModelResource):
     sub_tasks_many = fields.ManyToManyField(SubTaskResource, 'sub_task_many', full=True, null=True, blank=True)
-    tasks = Task.objects.all()
-    for task in tasks:
-        overdue_task = get_seconds_difference(datetime.now(), task.due_date)
-        if overdue_task:
-            OverDueTask = Task(overdue_task)
-            OverDueTask.save()
+
+    # tasks = Task.objects.all()
+    # for task in tasks:
+    #     d2 = datetime(task.due_date.year, task.due_date.month, task.due_date.day, task.due_date.hour,
+    #                   task.due_date.minute, task.due_date.second)
+    #     overdue_task = get_seconds_difference(datetime.now(), d2)
+    #     if overdue_task:
+    #         OverDueTask = Task(overdue_task)
+    #         OverDueTask.save()
 
     class Meta:
-        today = date.today()
-        queryset = Task.objects.all().filter(due_date__year=today.year,
-                                             due_date__month=today.month,
-                                             due_date__day=today.day).order_by("due_date")
+        today = date.today().strftime("%Y-%m-%d")
+        queryset = Task.objects.all().filter(due_date__lte=today).order_by("due_date")
         resource_name = 'due_date_overdue'
         fields = ['title', 'description', 'due_date', 'state', 'sub_tasks_many']
         filtering = {
