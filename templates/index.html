@@ -1,0 +1,219 @@
+{% load static %}
+<link href='http://fonts.googleapis.com/css?family=Francois+One' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Cabin:400,500,600,700' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Audiowide' rel='stylesheet' type='text/css'>
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+
+    var url = "http://127.0.0.1:8000/api/v1/tasks/?";
+
+    function getJsonData(url) {
+         $.getJSON(url + "format=json", function (json) {
+                //data is the JSON string
+                console.log(json);
+                var objects = json['objects'];
+                //console.log(objects['length']);
+                $("tbody").remove();
+                for (var i = 0; i < objects['length']; i++) {
+                    tr = $('<tr>');
+
+                    tr.append("<td>" + objects[i]['title'] + "</td>");
+                    tr.append("<td>" + objects[i]['description'] + "</td>");
+                    tr.append("<td>" + objects[i]['due_date'] + "</td>");
+                    if (objects[i]['state'] == 0) {
+                        tr.append("<td ><a href=/update" + objects[i]['resource_uri'] + "? >" + "Pending" + "</a></td>");
+                    }
+                    else
+                        tr.append("<td><a href=/update" + objects[i]['resource_uri'] + "? >" + "Completed" + "</a></td>");
+
+                    var sub_tasks = objects[i]['sub_tasks_many'];
+                    $('table').append(tr);
+
+                    for (var j = 0; j < sub_tasks['length']; j++) {
+                        tr = $('<tr>');
+                        tr.append("<td><ul><li>" + sub_tasks[j]['sub_title'] + "</li></ul></td>");
+                        tr.append("<td>" + sub_tasks[j]['sub_description'] + "</td>");
+                        tr.append("<td>" + sub_tasks[j]['sub_due_date'] + "</td>");
+                        if (sub_tasks[j]['sub_state'] == 0) {
+                            tr.append("<td ><a href=/update" + sub_tasks[j]['resource_uri'] + "? >" + "Pending" + "</a></td>");
+                        }
+                        else
+                            tr.append("<td><a href=/update" + sub_tasks[j]['resource_uri'] + "? >" + "Completed" + "</a></td>");
+
+                        $('table').append(tr);
+
+                    }
+
+                }
+            });
+    }
+
+    function jsFunction(value) {
+        {#alert(value);#}
+        switch (value) {
+            case "1":
+                url = "http://127.0.0.1:8000/api/v1/tasks/?";
+                break;
+            case "2":
+                {#alert("2");#}
+                url = "http://127.0.0.1:8000/api2/due_date_today/?";
+                break;
+            case "3":
+                url = "http://127.0.0.1:8000/api2/due_date_this_week/?";
+                break;
+            case "4":
+                url = "http://127.0.0.1:8000/api2/due_date_next_week/?";
+                break;
+            case "5":
+                url = "http://127.0.0.1:8000/api2/due_date_overdue/?";
+                break;
+        }
+        console.log(url);
+        getJsonData(url);
+    }
+
+    message = "";
+    {% for tasks in all_tasks %}
+        message += "{{ tasks.title }} is due at {{ tasks.due_date }}. \n";
+    {% endfor %}
+    alert(message);
+
+    $(document).ready(function () {
+
+        var getUrlParameter = function getUrlParameter(sParam) {
+            var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+                sURLVariables = sPageURL.split('&'),
+                sParameterName,
+                i;
+
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
+
+                if (sParameterName[0] === sParam) {
+                    return sParameterName[1] === undefined ? true : sParameterName[1];
+                }
+            }
+        };
+
+        var text = getUrlParameter("search_text");
+        console.log(text);
+
+
+        $("#search").click(function () {
+            var text = document.getElementById("search_text").value.trim();
+            console.log("cscsn " + document.getElementById("search_text").value.trim());
+            //alert("Hello");
+            if (text === "") {
+                var text = getUrlParameter("search_text");
+                console.log(text);
+            }
+
+            $.getJSON(url+"title__contains=" + text + "&format=json", function (json) {
+                //data is the JSON string
+                //console.log(json);
+                var objects = json['objects'];
+                //console.log(objects['length']);
+                $("tbody").remove();
+                for (var i = 0; i < objects['length']; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td>" + objects[i]['title'] + "</td>");
+                    tr.append("<td>" + objects[i]['description'] + "</td>");
+                    tr.append("<td>" + objects[i]['due_date'] + "</td>");
+                    if (objects[i]['state'] == 0) {
+                        tr.append("<td ><a href=/update" + objects[i]['resource_uri'] + "? >" + "Pending" + "</a></td>");
+                    }
+                    else
+                        tr.append("<td><a href=/update" + objects[i]['resource_uri'] + "? >" + "Completed" + "</a></td>");
+                    $('table').append(tr);
+
+
+                }
+            });
+        });
+
+        if (!(text !== undefined)) {
+            getJsonData(url);
+        }
+        else {
+            $("#search").click();
+        }
+
+        var input = document.getElementById("search");
+        // Execute a function when the user releases a key on the keyboard
+        input.addEventListener("keyup", function (event) {
+            // Cancel the default action, if needed
+            event.preventDefault();
+            // Number 13 is the "Enter" key on the keyboard
+            if (event.keyCode === 13) {
+                // Trigger the button element with a click
+                $("#search").click();
+            }
+        });
+
+
+        $('#checkbox').click(function (event) {
+            if (event.target.type !== 'checkbox') {
+                $(':checkbox', this).trigger('click');
+                alert("hello");
+            }
+        });
+
+    });
+
+
+</script>
+
+
+<head>
+    <title>To-do List App</title>
+</head>
+
+<body>
+<div class="container">
+    <!-- Search form -->
+    <form>
+        <input type="text" name="search_text" placeholder="Search" id="search_text">
+        <input type="button" value="Search" id="search">
+    </form>
+
+    <select type="filter" onchange="jsFunction(this.value);">
+        <option value="1">Reset</option>
+        <option value="2">Today</option>
+        <option value="3">This Week</option>
+        <option value="4">Next Week</option>
+        <option value="5">Overdue</option>
+        <select>
+
+            <table id="dtBasicExample" class="record_table table table-striped table-bordered table-sm " cellspacing="0"
+                   width="100%">
+                <a href="https://www.google.com">
+
+                    <thead>
+                    <tr>
+
+                        <th class="th-sm">Title
+                </a>
+                <i class="fa  float-right" aria-hidden="true"></i>
+                </th>
+                <th class="th-sm">Description
+                    <i class="fa  float-right" aria-hidden="true"></i>
+                </th>
+                <th class="th-sm">Due-Date
+                    <i class="fa  float-right" aria-hidden="true"></i>
+                </th>
+                <th class="th-sm">State
+                    <i class="fa float-right" aria-hidden="true"></i>
+                </th>
+                </tr>
+
+                </thead>
+
+                <tbody>
+                </tbody>
+            </table>
+</div>
+</body>
