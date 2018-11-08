@@ -47,7 +47,8 @@ def index(request):
         if alert:
             print(task.title)
             print (task.due_date)
-            task_alert.append(task)
+            if not task.state:
+                task_alert.append(task)
 
     return render(request, 'index.html', {'all_tasks': task_alert})
 

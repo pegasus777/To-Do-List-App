@@ -39,6 +39,14 @@ def update(request, tasks_id):
     # print (task.id)
     task.save()
 
+    for sub_tasks in task.sub_task_many.all():
+        if task.state:
+            sub_tasks.sub_state = 1
+        else:
+            sub_tasks.sub_state = 0
+        sub_tasks.save()
+
+
     tasks = Task.objects.all()
     task_alert = []
     for task in tasks:
@@ -76,9 +84,9 @@ def sub_task_update(request, tasks_id):
             break
 
     print (task_id)
-    getTask = Task.objects.get(id=task_id)  # type: Task
+    get_task = Task.objects.get(id=task_id)  # type: Task
     flag = False
-    for all_sub_tasks in getTask.sub_task_many.all():
+    for all_sub_tasks in get_task.sub_task_many.all():
         global flag
         if all_sub_tasks.sub_state:
             flag = True
@@ -87,11 +95,15 @@ def sub_task_update(request, tasks_id):
             break
 
     if flag:
-        if getTask.state:
-            getTask.state = 0
+        if get_task.state:
+            get_task.state = 0
         else:
-            getTask.state = 1
-        getTask.save()
+            get_task.state = 1
+    else:
+        if get_task.state:
+            get_task.state = 0
+
+    get_task.save()
 
     for task in tasks:
         alert = get_hours_difference(task.due_date)

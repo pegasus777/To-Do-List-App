@@ -37,7 +37,7 @@ v1_api.register(SubTaskResource())
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^update/', include('tasks.urls')),
-    url(r'^$', views.index),
+    url(r'^$', views.index, name='index'),
     url(r'^api/', include(v1_api.urls)),
     url(r'^api2/', include(due_date_resource.urls)),
     url(r'^api2/', include(due_date_this_week_resource.urls)),

@@ -13,6 +13,28 @@
 
     var url = domain +"api/v1/tasks/?";
 
+    function search() {
+            var text = document.getElementById("search_text").value.trim();
+            console.log("cscsn " + document.getElementById("search_text").value.trim());
+            //alert("Hello");
+            if (text === "") {
+                var text = getUrlParameter("search_text");
+                console.log(text);
+            }
+
+            $.getJSON(url + "title__contains=" + text + "&format=json", function (json) {
+                //data is the JSON string
+                //console.log(json);
+                var objects = json['objects'];
+                //console.log(objects['length']);
+                $("tbody").remove();
+                 console.log(json);
+                addPendingTasks(objects);
+
+                addCompletedTasks(objects);
+            });
+        }
+
     function convertToDateFormat(objectElement) {
         var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                 "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
@@ -39,7 +61,7 @@
                 tr.append("<td>" + objects[i]['title'] + "</td>");
                 tr.append("<td>" + objects[i]['description'] + "</td>");
 
-                tr.append("<td>" + convertToDateFormat(objects[i]['due_date']) + " UTC </td>");
+                tr.append("<td  style='text-align:center';>" + convertToDateFormat(objects[i]['due_date']) + " UTC </td>");
                 if (objects[i]['state'] == 0) {
                     tr.append("<td ><a href=/update" + objects[i]['resource_uri'] + "? >" + "Pending" + "</a></td>");
                 }
@@ -53,7 +75,7 @@
                     tr = $('<tr>');
                     tr.append("<td><ul><li>" + sub_tasks[j]['sub_title'] + "</li></ul></td>");
                     tr.append("<td>" + sub_tasks[j]['sub_description'] + "</td>");
-                    tr.append("<td>" + "-" + "</td>");
+                    tr.append("<td style='text-align:center';>" + "-" + "</td>");
                     if (sub_tasks[j]['sub_state'] == 0) {
                         tr.append("<td ><a href=/update" + sub_tasks[j]['resource_uri'] + "? >" + "Pending" + "</a></td>");
                     }
@@ -75,7 +97,7 @@
                 tr.append("<td>" + objects[i]['title'] + "</td>");
                 tr.append("<td>" + objects[i]['description'] + "</td>");
 
-                tr.append("<td>" + convertToDateFormat(objects[i]['due_date']) + " UTC </td>");
+                tr.append("<td style='text-align:center';>" + convertToDateFormat(objects[i]['due_date']) + " UTC </td>");
                 if (objects[i]['state'] == 0) {
                     tr.append("<td ><a href=/update" + objects[i]['resource_uri'] + "? >" + "Pending" + "</a></td>");
                 }
@@ -89,7 +111,7 @@
                     tr = $('<tr>');
                     tr.append("<td><ul><li>" + sub_tasks[j]['sub_title'] + "</li></ul></td>");
                     tr.append("<td>" + sub_tasks[j]['sub_description'] + "</td>");
-                    tr.append("<td>" + "-" + "</td>");
+                    tr.append("<td style='text-align:center';>" + "-" + "</td>");
                     if (sub_tasks[j]['sub_state'] == 0) {
                         tr.append("<td ><a href=/update" + sub_tasks[j]['resource_uri'] + "? >" + "Pending" + "</a></td>");
                     }
@@ -195,6 +217,8 @@
             });
         });
 
+
+
         if (!(text !== undefined)) {
             getJsonData(url);
         }
@@ -228,25 +252,55 @@
 </script>
 
 
+
 <head>
     <title>To-do List App</title>
 </head>
 
 <body>
-<div class="container">
-    <!-- Search form -->
-    <form>
-        <input type="text" name="search_text" placeholder="Search" id="search_text">
-        <input type="button" value="Search" id="search">
-    </form>
 
-    <select type="filter" onchange="jsFunction(this.value);">
+<div class="navbar navbar-inverse navbar-static-top" role="navigation">
+
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+		<span class="sr-only">Toggle navigation</span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		</button>
+		<a class="navbar-brand" rel="home" href="/">To Do List</a>
+	</div>
+
+	<div class="collapse navbar-collapse navbar-ex1-collapse">
+
+		<div class="col-sm-3 col-md-3 pull-right">
+		<form class="navbar-form" role="search">
+		<div class="input-group">
+			<input type="text" class="form-control" placeholder="Search" name="search_text" id="search_text" onkeyup="search()">
+			<div class="input-group-btn">
+				<button class="btn btn-default" type="button" value="Search" id="search"> Search</button>
+			</div>
+		</div>
+		</form>
+		</div>
+
+	</div>
+</div>
+
+
+<div class="container-fluid">
+
+    <div class="form-group">
+        <label for="sel1"><h4>Filter by Due-Date (select one):</h4></label>
+    <select class="form-control-static" type="filter" onchange="jsFunction(this.value);">
         <option value="1">Reset</option>
         <option value="2">Today</option>
         <option value="3">This Week</option>
         <option value="4">Next Week</option>
         <option value="5">Overdue</option>
     </select>
+    </div>
+
     <h2>Pending Tasks</h2>
     <table id="Pendingtable" class="record_table table table-striped table-bordered table-sm " cellspacing="0"
            width="100%">
@@ -258,7 +312,7 @@
             <th class="th-sm">Description
                 <i class="fa  float-right" aria-hidden="true"></i>
             </th>
-            <th class="th-sm">Due-Date
+            <th class="th-sm" style="text-align: center">Due-Date
                 <i class="fa  float-right" aria-hidden="true"></i>
             </th>
             <th class="th-sm">State
@@ -280,7 +334,7 @@
             <th class="th-sm">Description
                 <i class="fa  float-right" aria-hidden="true"></i>
             </th>
-            <th class="th-sm">Due-Date
+            <th class="th-sm" style="text-align: center">Due-Date
                 <i class="fa  float-right" aria-hidden="true"></i>
             </th>
             <th class="th-sm">State
@@ -290,6 +344,7 @@
         </thead>
         <tbody>
         </tbody>
+        <div id ="search_empty"></div>
     </table>
 </div>
 </body>
