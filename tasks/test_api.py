@@ -6,6 +6,7 @@ from .assertions import assert_valid_schema
 BASE_URL = 'http://127.0.0.1:8000'
 # BASE_URL = "https://reqres.in"
 
+
 def test_all_tasks():
     """Verify GET request works using API client."""
     # response = requests.get("https://reqres.in/api/users")
