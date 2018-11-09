@@ -1,0 +1,120 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/root.json",
+  "type": "object",
+  "title": "The Root Schema",
+  "required": [
+    "meta",
+    "objects"
+  ],
+  "properties": {
+    "meta": {
+      "$id": "#/properties/meta",
+      "type": "object",
+      "title": "The Meta Schema",
+      "required": [
+        "limit",
+        "offset",
+        "total_count"
+      ],
+      "properties": {
+        "limit": {
+          "$id": "#/properties/meta/properties/limit",
+          "type": "integer",
+          "title": "The Limit Schema",
+          "default": 0,
+          "examples": [
+            20
+          ]
+        },
+        "offset": {
+          "$id": "#/properties/meta/properties/offset",
+          "type": "integer",
+          "title": "The Offset Schema",
+          "default": 0,
+          "examples": [
+            0
+          ]
+        },
+        "total_count": {
+          "$id": "#/properties/meta/properties/total_count",
+          "type": "integer",
+          "title": "The Total_count Schema",
+          "default": 0,
+          "examples": [
+            6
+          ]
+        }
+      }
+    },
+    "objects": {
+      "$id": "#/properties/objects",
+      "type": "array",
+      "title": "The Objects Schema",
+      "items": {
+        "$id": "#/properties/objects/items",
+        "type": "object",
+        "title": "The Items Schema",
+        "required": [
+          "resource_uri",
+          "sub_description",
+          "sub_due_date",
+          "sub_state",
+          "sub_title"
+        ],
+        "properties": {
+          "resource_uri": {
+            "$id": "#/properties/objects/items/properties/resource_uri",
+            "type": "string",
+            "title": "The Resource_uri Schema",
+            "default": "",
+            "examples": [
+              "/api/v1/sub_tasks/5/"
+            ],
+            "pattern": "^(.*)$"
+          },
+          "sub_description": {
+            "$id": "#/properties/objects/items/properties/sub_description",
+            "type": "string",
+            "title": "The Sub_description Schema",
+            "default": "",
+            "examples": [
+              "For Biryani"
+            ],
+            "pattern": "^(.*)$"
+          },
+          "sub_due_date": {
+            "$id": "#/properties/objects/items/properties/sub_due_date",
+            "type": "string",
+            "title": "The Sub_due_date Schema",
+            "default": "",
+            "examples": [
+              "2018-11-07T21:27:56"
+            ],
+            "pattern": "^(.*)$"
+          },
+          "sub_state": {
+            "$id": "#/properties/objects/items/properties/sub_state",
+            "type": "integer",
+            "title": "The Sub_state Schema",
+            "default": 0,
+            "examples": [
+              0
+            ]
+          },
+          "sub_title": {
+            "$id": "#/properties/objects/items/properties/sub_title",
+            "type": "string",
+            "title": "The Sub_title Schema",
+            "default": "",
+            "examples": [
+              "Mushroom"
+            ],
+            "pattern": "^(.*)$"
+          }
+        }
+      }
+    }
+  }
+}

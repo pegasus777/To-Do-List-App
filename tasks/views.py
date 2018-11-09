@@ -52,7 +52,8 @@ def update(request, tasks_id):
     for task in tasks:
         alert = get_hours_difference(task.due_date)
         if alert:
-            task_alert.append(task)
+            if not task.state:
+                task_alert.append(task)
 
     return render(request, 'index.html', {'all_tasks': task_alert})
 
@@ -108,7 +109,8 @@ def sub_task_update(request, tasks_id):
     for task in tasks:
         alert = get_hours_difference(task.due_date)
         if alert:
-            task_alert.append(task)
+            if not task.state:
+                task_alert.append(task)
 
     return render(request, 'index.html', {'all_tasks': task_alert})
 

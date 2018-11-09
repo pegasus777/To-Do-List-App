@@ -1,0 +1,149 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "The Root Schema",
+  "required": [
+    "meta",
+    "objects"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "title": "The Meta Schema",
+      "required": [
+        "limit",
+        "offset",
+        "total_count"
+      ],
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "title": "The Limit Schema",
+          "examples": [
+            20
+          ]
+        },
+        "offset": {
+          "type": "integer",
+          "title": "The Offset Schema",
+          "examples": [
+            0
+          ]
+        },
+        "total_count": {
+          "type": "integer",
+          "title": "The Total_count Schema",
+          "examples": [
+            4
+          ]
+        }
+      }
+    },
+    "objects": {
+      "type": "array",
+      "title": "The Objects Schema",
+      "items": {
+        "type": "object",
+        "title": "The Items Schema",
+        "required": [
+          "description",
+          "due_date",
+          "resource_uri",
+          "state",
+          "sub_tasks_many",
+          "title"
+        ],
+        "properties": {
+          "description": {
+            "type": "string",
+            "title": "The Description Schema",
+            "examples": [
+              "Eat Biryani"
+            ]
+          },
+          "due_date": {
+            "type": "string",
+            "title": "The Due_date Schema",
+            "examples": [
+              "2018-11-07T21:36:56"
+            ]
+          },
+          "resource_uri": {
+            "type": "string",
+            "title": "The Resource_uri Schema",
+            "examples": [
+              "/api/v1/tasks/1/"
+            ]
+          },
+          "state": {
+            "type": "integer",
+            "title": "The State Schema",
+            "examples": [
+              0
+            ]
+          },
+          "sub_tasks_many": {
+            "type": "array",
+            "title": "The Sub_tasks_many Schema",
+            "items": {
+              "type": "object",
+              "title": "The Items Schema",
+              "required": [
+                "resource_uri",
+                "sub_description",
+                "sub_due_date",
+                "sub_state",
+                "sub_title"
+              ],
+              "properties": {
+                "resource_uri": {
+                  "type": "string",
+                  "title": "The Resource_uri Schema",
+                  "examples": [
+                    "/api/v1/sub_tasks/4/"
+                  ]
+                },
+                "sub_description": {
+
+                  "type": "string",
+                  "title": "The Sub_description Schema",
+                  "examples": [
+                    "For Biryani"
+                  ]
+                },
+                "sub_due_date": {
+                  "type": "string",
+                  "title": "The Sub_due_date Schema",
+                  "examples": [
+                    "2018-11-08T15:57:26"
+                  ]
+                },
+                "sub_state": {
+                  "type": "integer",
+                  "title": "The Sub_state Schema",
+                  "examples": [
+                    0
+                  ]
+                },
+                "sub_title": {
+                  "type": "string",
+                  "title": "The Sub_title Schema",
+                  "examples": [
+                    "Tomato"
+                  ]
+                }
+              }
+            }
+          },
+          "title": {
+            "type": "string",
+            "title": "The Title Schema",
+            "examples": [
+              "Make Biryani"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
